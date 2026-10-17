@@ -26,6 +26,7 @@ if (submitBtn) {
   submitBtn.addEventListener('click', async event => {
     event.preventDefault();
     clearGallery();
+    currentPage = 1;
 
     const input = document.querySelector('form input');
     const searchQuery = input.value.trim();
@@ -36,7 +37,7 @@ if (submitBtn) {
     }
 
     showLoader();
-    getImagesByQuery(searchQuery)
+    await getImagesByQuery(searchQuery, currentPage)
       .then(data => {
         if (!data.hits || data.hits.length === 0) {
           errorMessage(
@@ -66,8 +67,8 @@ if (loadMoreBtn) {
       return;
     }
 
-    showLoader();
-    getImagesByQuery(searchQuery, ++currentPage)
+    showLoadMoreButton();
+    await getImagesByQuery(searchQuery, ++currentPage)
       .then(data => {
         if (!data.hits || data.hits.length === 0) {
           errorMessage(
@@ -81,7 +82,7 @@ if (loadMoreBtn) {
         errorMessage(`Error fetching images: ${error.message}`);
       })
       .finally(() => {
-        hideLoader();
+        hideLoadMoreButton();
       });
   });
 }
