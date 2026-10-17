@@ -9,6 +9,8 @@ import iziToast from 'izitoast';
 
 import 'izitoast/dist/css/iziToast.min.css';
 
+let currentPage = 1;
+
 const errorMessage = error => {
   iziToast.error({
     position: 'topRight',
@@ -65,7 +67,7 @@ if (loadMoreBtn) {
     }
 
     showLoader();
-    getImagesByQuery(searchQuery)
+    getImagesByQuery(searchQuery, ++currentPage)
       .then(data => {
         if (!data.hits || data.hits.length === 0) {
           errorMessage(
