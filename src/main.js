@@ -19,9 +19,9 @@ const errorMessage = error => {
   });
 };
 
-const button = document.querySelector('.form button');
-if (button) {
-  button.addEventListener('click', async event => {
+const submitBtn = document.querySelector('.form button');
+if (submitBtn) {
+  submitBtn.addEventListener('click', async event => {
     event.preventDefault();
     clearGallery();
 
@@ -39,6 +39,37 @@ if (button) {
         if (!data.hits || data.hits.length === 0) {
           errorMessage(
             'Sorry, there are no images matching your search query. Please try again!'
+          );
+          return;
+        }
+        createGallery(data.hits, data.totalHits);
+      })
+      .catch(error => {
+        errorMessage(`Error fetching images: ${error.message}`);
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  });
+}
+
+const loadMoreBtn = document.querySelector('.load-more');
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener('click', async () => {
+    const input = document.querySelector('form input');
+    const searchQuery = input.value.trim();
+
+    if (searchQuery === '') {
+      errorMessage('Please enter a search term.');
+      return;
+    }
+
+    showLoader();
+    getImagesByQuery(searchQuery)
+      .then(data => {
+        if (!data.hits || data.hits.length === 0) {
+          errorMessage(
+            'Sorry, there are no more images matching your search query.'
           );
           return;
         }
